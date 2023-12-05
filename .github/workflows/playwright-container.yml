@@ -1,0 +1,29 @@
+# GitHub Actions supports sharding tests between multiple jobs. 
+# Check out our sharding doc to learn more about sharding and to see a GitHub actions 
+# example of how to configure a job to run your tests on multiple machines as well as how to merge the HTML reports.
+name: Playwright Tests in Containers
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+jobs:
+  test:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.40.0-jammy
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Run Playwright tests
+      run: npx playwright test
+      env:
+        HOME: /root
